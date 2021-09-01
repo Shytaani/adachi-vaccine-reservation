@@ -24,14 +24,14 @@ public class AdachiVaccineReservationChecker {
 
     private static final HttpClient client = HttpClient.newBuilder().build();
 
-    private static final Path BASE_DIR = Path.of("out");
+    private static final String BASE_DIR = "output";
 
-    private static final Path HTML_DIR = Path.of(BASE_DIR.toString(), "html");
+    private static final String HTML_DIR = BASE_DIR + "\\html";
 
-    private static final Path LOG_DIR = Path.of(BASE_DIR.toString(), "log");
+    private static final String LOG_DIR = BASE_DIR + "\\log";
 
-    public static void main(String[] args) {
-        // ロガーの設定
+    static {
+        // Loggerの設定
         logger.setLevel(Level.INFO);
         try {
             FileHandler handler = new FileHandler(LOG_DIR + "\\adachi-vaccine-reservation-checker.log");
@@ -40,6 +40,20 @@ public class AdachiVaccineReservationChecker {
         } catch (IOException e) {
             logger.log(Level.WARNING, "ロガーの設定でエラー", e);
         }
+    }
+
+    public static void main(String[] args) {
+
+        logger.log(Level.INFO, "出力ディレクトリの作成 開始");
+        try {
+            if (Files.notExists(Path.of(BASE_DIR))) Files.createDirectory(Path.of(BASE_DIR));
+            if (Files.notExists(Path.of(HTML_DIR))) Files.createDirectory(Path.of(HTML_DIR));
+            if (Files.notExists(Path.of(LOG_DIR))) Files.createDirectory(Path.of(LOG_DIR));
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "出力ディレクトリの作成に失敗", e);
+            return;
+        }
+        logger.log(Level.INFO, "出力ディレクトリの作成 終了");
 
         logger.log(Level.INFO, "足立区コロナワクチン予約空き状況確認 開始");
         LocalDate today = LocalDate.now();
